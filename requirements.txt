@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+gradio_client
+pydantic
+python-multipart
+python-dotenv
+slowapi
+mtranslate
+httpx

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.venv/
+venv/
+env/
+
+# Vercel
+.vercel/
+
+# Audio temp files
+static/temp/
+
+# OS
+.DS_Store
+Thumbs.db
