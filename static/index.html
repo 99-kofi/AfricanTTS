@@ -365,7 +365,7 @@
         <section id="api-docs" style="margin-top: 4rem;">
             <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">API Reference</h2>
             <p style="color: var(--text-dim); margin-bottom: 3rem; font-size: 0.95rem;">Base URL: <code
-                    style="color: var(--primary); background: rgba(255,77,77,0.08); padding: 0.2rem 0.6rem; border-radius: 6px;">http://localhost:8000</code>
+                    style="color: var(--primary); background: rgba(255,77,77,0.08); padding: 0.2rem 0.6rem; border-radius: 6px;">https://african-tts.vercel.app</code>
                 &nbsp;|&nbsp; Interactive docs: <a href="/docs" style="color: var(--accent);">/docs</a></p>
 
             <!-- Endpoint 1: POST /api/translate -->
@@ -411,7 +411,7 @@
                             cURL Example</div>
                         <div style="position: relative;">
                             <pre
-                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-translate">curl -X POST "http://localhost:8000/api/translate" \
+                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-translate">curl -X POST "https://african-tts.vercel.app/api/translate" \
   -H "Content-Type: application/json" \
   -d '{"english_text": "Good morning!"}'</code></pre>
                             <button onclick="copyCode('curl-translate')"
@@ -528,7 +528,7 @@
                             cURL Examples</div>
                         <div style="position: relative; margin-bottom: 1rem;">
                             <pre
-                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-tts-female">curl -X POST "http://localhost:8000/api/tts" \
+                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-tts-female">curl -X POST "https://african-tts.vercel.app/api/tts" \
   -H "Content-Type: application/json" \
   -d '{"english_text": "I am coming home.", "speaker": "Female"}'</code></pre>
                             <button onclick="copyCode('curl-tts-female')"
@@ -536,7 +536,7 @@
                         </div>
                         <div style="position: relative;">
                             <pre
-                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-tts-male">curl -X POST "http://localhost:8000/api/tts" \
+                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-tts-male">curl -X POST "https://african-tts.vercel.app/api/tts" \
   -H "Content-Type: application/json" \
   -d '{"english_text": "I am coming home.", "speaker": "Male (Low)"}'</code></pre>
                             <button onclick="copyCode('curl-tts-male')"
