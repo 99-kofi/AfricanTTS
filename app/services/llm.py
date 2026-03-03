@@ -24,3 +24,22 @@ class LLMTranslationService:
         except Exception as e:
             print(f"Translation Error: {e}")
             return english_text
+
+    async def translate_to_english(self, twi_text: str) -> str:
+        """
+        Translate Asante Twi text into English using mtranslate.
+        """
+        try:
+            print(f"Translating Twi: '{twi_text}'")
+            english_text = await asyncio.to_thread(translate, twi_text, 'en', 'ak')
+            
+            if not english_text or english_text == twi_text:
+                print("Translation returned original or empty. Returning original.")
+                return twi_text
+
+            print(f"Translated to English: '{english_text}'")
+            return english_text
+            
+        except Exception as e:
+            print(f"Twi-to-English Translation Error: {e}")
+            return twi_text

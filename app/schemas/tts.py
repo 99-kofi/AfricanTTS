@@ -12,3 +12,11 @@ class TTSRequest(BaseModel):
 class TTSResponse(BaseModel):
     audio_url: str = Field(..., description="Data URL (base64) or static path to the generated audio.")
     twi_text: str = Field(..., description="The translated Asante Twi text.")
+
+class TwiToEnglishRequest(BaseModel):
+    twi_text: str = Field(..., description="The Twi text to translate and/or synthesize.")
+    include_audio: bool = Field(True, description="Whether to include TTS audio.")
+
+class TwiToEnglishResponse(BaseModel):
+    english_text: str = Field(..., description="The translated English text.")
+    audio_url: Optional[str] = Field(None, description="Data URL (base64) for English TTS if requested.")

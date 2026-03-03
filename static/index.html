@@ -300,19 +300,32 @@
 
     <div class="container">
         <header>
-            <h1>ENGLISH TO TWI</h1>
-            <p class="subtitle">Real-time professional translation and high-fidelity speech synthesis.</p>
+            <h1 id="main-title">ENGLISH TO TWI</h1>
+            <p class="subtitle" id="main-subtitle">Real-time professional translation and high-fidelity speech
+                synthesis.</p>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: center; align-items: center; gap: 1.5rem;">
+                <div id="mode-indicator"
+                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 1.5rem; border-radius: 100px; display: flex; align-items: center; gap: 1rem; font-weight: 700; font-size: 0.9rem;">
+                    <span id="mode-en" style="color: var(--accent);">ENGLISH</span>
+                    <button id="swap-btn"
+                        style="padding: 0.5rem; background: var(--gradient); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3); border: none; cursor: pointer; transition: all 0.3s;">
+                        <i class="fas fa-exchange-alt" style="color: white; font-size: 0.8rem;"></i>
+                    </button>
+                    <span id="mode-twi" style="color: var(--text-dim);">TWI</span>
+                </div>
+            </div>
         </header>
 
         <main>
             <section class="tester-card">
                 <div class="input-group">
-                    <label>Input English</label>
-                    <textarea id="text-input" placeholder="Enter text to translate..."></textarea>
+                    <label id="input-label">Input English</label>
+                    <textarea id="text-input" placeholder="Enter English text to translate..."></textarea>
                 </div>
 
                 <div class="controls">
-                    <div class="select-wrapper">
+                    <div class="select-wrapper" id="voice-persona-wrapper">
                         <label>Voice Persona</label>
                         <select id="speaker-select">
                             <option value="Female">🎙 Female</option>
@@ -333,7 +346,7 @@
                         <div class="status-badge" id="trans-status">
                             <i class="fas fa-check"></i> TRANSLATED
                         </div>
-                        <div class="result-header" style="color: var(--accent);">
+                        <div class="result-header" id="result-lang-header" style="color: var(--accent);">
                             <i class="fas fa-language"></i> ASANTE TWI
                         </div>
                         <div class="twi-display" id="twi-text-display">...</div>
@@ -677,11 +690,51 @@
         const audioResult = document.getElementById('audio-result');
         const transStatus = document.getElementById('trans-status');
 
+        let isTwiToEn = false;
+        const swapBtn = document.getElementById('swap-btn');
+        const mainTitle = document.getElementById('main-title');
+        const mainSubtitle = document.getElementById('main-subtitle');
+        const modeEn = document.getElementById('mode-en');
+        const modeTwi = document.getElementById('mode-twi');
+        const inputLabel = document.getElementById('input-label');
+        const textInput = document.getElementById('text-input');
+        const voiceWrapper = document.getElementById('voice-persona-wrapper');
+        const resultLangHeader = document.getElementById('result-lang-header');
+
+        swapBtn.addEventListener('click', () => {
+            isTwiToEn = !isTwiToEn;
+            swapBtn.style.transform = isTwiToEn ? 'rotate(180deg)' : 'rotate(0deg)';
+
+            if (isTwiToEn) {
+                mainTitle.textContent = "TWI TO ENGLISH";
+                mainSubtitle.textContent = "Translate Asante Twi phrases to English with instant audio playback.";
+                modeEn.style.color = 'var(--text-dim)';
+                modeTwi.style.color = 'var(--accent)';
+                inputLabel.textContent = "Input Asante Twi";
+                textInput.placeholder = "Kyerɛ nea wopɛ sɛ wukyerɛ ase...";
+                voiceWrapper.style.opacity = '0.5';
+                voiceWrapper.style.pointerEvents = 'none';
+                resultLangHeader.innerHTML = '<i class="fas fa-language"></i> ENGLISH TRANSLATION';
+            } else {
+                mainTitle.textContent = "ENGLISH TO TWI";
+                mainSubtitle.textContent = "Real-time professional translation and high-fidelity speech synthesis.";
+                modeEn.style.color = 'var(--accent)';
+                modeTwi.style.color = 'var(--text-dim)';
+                inputLabel.textContent = "Input English";
+                textInput.placeholder = "Enter English text to translate...";
+                voiceWrapper.style.opacity = '1';
+                voiceWrapper.style.pointerEvents = 'all';
+                resultLangHeader.innerHTML = '<i class="fas fa-language"></i> ASANTE TWI';
+            }
+            resultsArea.style.display = 'none';
+            textInput.value = "";
+        });
+
         synthBtn.addEventListener('click', async () => {
-            const english_text = document.getElementById('text-input').value.trim();
+            const text = textInput.value.trim();
             const speaker = document.getElementById('speaker-select').value;
 
-            if (!english_text) return;
+            if (!text) return;
 
             // 1. Reset & Show Initial Loading
             synthBtn.disabled = true;
@@ -695,43 +748,63 @@
             transStatus.style.color = '#fff';
 
             try {
-                // STEP 1: TRANSLATE
                 resultsArea.style.display = 'block';
-                twiDisplay.textContent = "Translating...";
+                twiDisplay.textContent = "Processing...";
 
-                const transResp = await fetch('/api/translate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ english_text })
-                });
+                if (isTwiToEn) {
+                    // TWI TO ENGLISH FLOW
+                    const response = await fetch('/api/tts-english', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ twi_text: text, include_audio: true })
+                    });
 
-                if (!transResp.ok) throw new Error('Translation failed');
-                const transData = await transResp.json();
-                const twi_text = transData.twi_text;
+                    if (!response.ok) throw new Error('Translation failed');
+                    const data = await response.json();
 
-                // Update UI with translation immediately
-                twiDisplay.textContent = twi_text;
-                transStatus.innerHTML = '<i class="fas fa-check"></i> TRANSLATED';
-                transStatus.style.background = 'rgba(255, 215, 0, 0.1)';
-                transStatus.style.color = 'var(--accent)';
+                    twiDisplay.textContent = data.english_text;
+                    transStatus.innerHTML = '<i class="fas fa-check"></i> TRANSLATED';
+                    transStatus.style.background = 'rgba(255, 215, 0, 0.1)';
+                    transStatus.style.color = 'var(--accent)';
 
-                // STEP 2: SYNTHESIZE (Concurrent in mind, but UI reflects it now)
-                audioLoading.style.display = 'flex';
+                    if (data.audio_url) {
+                        audioSuccess.style.display = 'block';
+                        audioResult.src = data.audio_url;
+                        audioResult.play().catch(e => console.log("Auto-play blocked"));
+                    }
+                } else {
+                    // ENGLISH TO TWI FLOW (Existing)
+                    const transResp = await fetch('/api/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ english_text: text })
+                    });
 
-                const synthResp = await fetch('/api/tts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ twi_text, speaker })
-                });
+                    if (!transResp.ok) throw new Error('Translation failed');
+                    const transData = await transResp.json();
+                    const twi_text = transData.twi_text;
 
-                if (!synthResp.ok) throw new Error('Synthesis failed');
-                const synthData = await synthResp.json();
+                    twiDisplay.textContent = twi_text;
+                    transStatus.innerHTML = '<i class="fas fa-check"></i> TRANSLATED';
+                    transStatus.style.background = 'rgba(255, 215, 0, 0.1)';
+                    transStatus.style.color = 'var(--accent)';
 
-                // Show Final Success
-                audioLoading.style.display = 'none';
-                audioSuccess.style.display = 'block';
-                audioResult.src = synthData.audio_url;
-                audioResult.play().catch(e => console.log("Auto-play blocked"));
+                    audioLoading.style.display = 'flex';
+
+                    const synthResp = await fetch('/api/tts', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ twi_text, speaker })
+                    });
+
+                    if (!synthResp.ok) throw new Error('Synthesis failed');
+                    const synthData = await synthResp.json();
+
+                    audioLoading.style.display = 'none';
+                    audioSuccess.style.display = 'block';
+                    audioResult.src = synthData.audio_url;
+                    audioResult.play().catch(e => console.log("Auto-play blocked"));
+                }
 
             } catch (error) {
                 console.error(error);

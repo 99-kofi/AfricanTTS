@@ -2,13 +2,15 @@ import base64
 import os
 import asyncio
 from fastapi import APIRouter, HTTPException
-from app.schemas.tts import TTSRequest, TTSResponse, TranslationRequest
+from app.schemas.tts import TTSRequest, TTSResponse, TranslationRequest, TwiToEnglishRequest, TwiToEnglishResponse
 from app.services.africa_tts import AfricaTTSService
 from app.services.llm import LLMTranslationService
+from app.services.english_tts import EnglishTTSService
 
 router = APIRouter()
 tts_service = AfricaTTSService()
 llm_service = LLMTranslationService()
+english_tts_service = EnglishTTSService()
 
 @router.post("/translate")
 async def translate_text(payload: TranslationRequest):
@@ -22,11 +24,22 @@ async def translate_text(payload: TranslationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/translate-to-english")
+async def translate_twi_to_english(payload: TwiToEnglishRequest):
+    """
+    Translate Asante Twi text to English.
+    """
+    try:
+        english_text = await llm_service.translate_to_english(payload.twi_text)
+        return {"english_text": english_text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/tts", response_model=TTSResponse)
 async def synthesize_speech(payload: TTSRequest):
     """
     Translate English to Asante Twi and synthesize the audio.
-    Returns the Twi text and a base64-encoded audio data URL (works on any platform).
+    Returns the Twi text and a base64-encoded audio data URL.
     """
     try:
         twi_text = payload.twi_text
@@ -49,17 +62,41 @@ async def synthesize_speech(payload: TTSRequest):
             speaker=payload.speaker
         )
 
-        # Step 3: Encode to base64 data URL so it works on any platform
-        # (no filesystem dependency — compatible with Vercel, Railway, etc.)
         with open(local_temp_path, "rb") as f:
             audio_bytes = f.read()
         audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
         audio_url = f"data:audio/wav;base64,{audio_b64}"
+
+        # Clean up Africa TTS temp file
+        if os.path.exists(local_temp_path):
+            os.remove(local_temp_path)
 
         return TTSResponse(
             audio_url=audio_url,
             twi_text=twi_text
         )
     except Exception as e:
-        print(f"Synthesis Error: {type(e).__name__}: {e}")
+        print(f"Asante Twi Synthesis Error: {e}")
         raise HTTPException(status_code=500, detail=f"Twi TTS Failed: {str(e)}")
+
+@router.post("/tts-english", response_model=TwiToEnglishResponse)
+async def synthesize_english_speech(payload: TwiToEnglishRequest):
+    """
+    Translate Twi to English and synthesize English speech.
+    """
+    try:
+        # Step 1: Translate Twi to English
+        english_text = await llm_service.translate_to_english(payload.twi_text)
+        
+        audio_url = None
+        if payload.include_audio:
+            # Step 2: Synthesize English Speech
+            audio_url = await english_tts_service.synthesize(english_text)
+            
+        return TwiToEnglishResponse(
+            english_text=english_text,
+            audio_url=audio_url
+        )
+    except Exception as e:
+        print(f"English Synthesis Error: {e}")
+        raise HTTPException(status_code=500, detail=f"English TTS Failed: {str(e)}")
