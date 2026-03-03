@@ -466,6 +466,36 @@
                     </div>
                     <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Translate Asante Twi text to English.</p>
 
+                    <div style="margin-bottom: 1rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase;">
+                            Parameters</div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.07);">
+                                    <th
+                                        style="text-align: left; padding: 0.6rem 0.8rem; color: var(--text-dim); font-weight: 600;">
+                                        Field</th>
+                                    <th
+                                        style="text-align: left; padding: 0.6rem 0.8rem; color: var(--text-dim); font-weight: 600;">
+                                        Type</th>
+                                    <th
+                                        style="text-align: left; padding: 0.6rem 0.8rem; color: var(--text-dim); font-weight: 600;">
+                                        Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 0.6rem 0.8rem;"><code style="color: #a8ff78;">twi_text</code>
+                                    </td>
+                                    <td style="padding: 0.6rem 0.8rem; color: var(--text-dim);">string</td>
+                                    <td style="padding: 0.6rem 0.8rem; color: var(--text-dim);">The Twi text to
+                                        translate.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                         <div>
                             <div
@@ -484,6 +514,20 @@
                                 style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.85rem; color: #79b8ff; margin: 0; overflow-x: auto;"><code>{
   "translated_text": "I am coming home."
 }</code></pre>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase;">
+                            cURL Example</div>
+                        <div style="position: relative;">
+                            <pre
+                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-translate-twi">curl -X POST "https://african-tts.vercel.app/api/translate-twi" \
+  -H "Content-Type: application/json" \
+  -d '{"twi_text": "Mereba fie."}'</code></pre>
+                            <button onclick="copyCode('curl-translate-twi')"
+                                style="position: absolute; top: 0.8rem; right: 0.8rem; background: rgba(255,255,255,0.06); border: none; border-radius: 8px; padding: 0.4rem 0.8rem; color: var(--text-dim); font-size: 0.75rem; cursor: pointer;">Copy</button>
                         </div>
                     </div>
                 </div>
@@ -639,8 +683,46 @@
                         <code
                             style="font-family: 'JetBrains Mono'; font-size: 1.1rem; color: white;">/api/tts-english</code>
                     </div>
-                    <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Translate Asante Twi to English and
-                        synthesize to speech.</p>
+                    <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Translate Asante Twi to English
+                        <strong>and</strong> synthesize to speech. Returns a playable audio URL.
+                    </p>
+
+                    <div style="margin-bottom: 1rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase;">
+                            Parameters</div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.07);">
+                                    <th
+                                        style="text-align: left; padding: 0.6rem 0.8rem; color: var(--text-dim); font-weight: 600;">
+                                        Field</th>
+                                    <th
+                                        style="text-align: left; padding: 0.6rem 0.8rem; color: var(--text-dim); font-weight: 600;">
+                                        Type</th>
+                                    <th
+                                        style="text-align: left; padding: 0.6rem 0.8rem; color: var(--text-dim); font-weight: 600;">
+                                        Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding: 0.6rem 0.8rem;"><code style="color: #a8ff78;">twi_text</code>
+                                    </td>
+                                    <td style="padding: 0.6rem 0.8rem; color: var(--text-dim);">string</td>
+                                    <td style="padding: 0.6rem 0.8rem; color: var(--text-dim);">The Twi text to
+                                        translate and synthesize.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.6rem 0.8rem;"><code
+                                            style="color: #a8ff78;">include_audio</code></td>
+                                    <td style="padding: 0.6rem 0.8rem; color: var(--text-dim);">boolean</td>
+                                    <td style="padding: 0.6rem 0.8rem; color: var(--text-dim);">Whether to include audio
+                                        in the response.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
                         <div>
@@ -664,6 +746,22 @@
 }</code></pre>
                         </div>
                     </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase;">
+                            cURL Example</div>
+                        <div style="position: relative;">
+                            <pre
+                                style="background: #000; border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.82rem; color: #dcdcdc; margin: 0; overflow-x: auto;"><code id="curl-tts-english">curl -X POST "https://african-tts.vercel.app/api/tts-english" \
+  -H "Content-Type: application/json" \
+  -d '{"twi_text": "Mema wo akye!", "include_audio": true}'</code></pre>
+                            <button onclick="copyCode('curl-tts-english')"
+                                style="position: absolute; top: 0.8rem; right: 0.8rem; background: rgba(255,255,255,0.06); border: none; border-radius: 8px; padding: 0.4rem 0.8rem; color: var(--text-dim); font-size: 0.75rem; cursor: pointer;">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <footer>
