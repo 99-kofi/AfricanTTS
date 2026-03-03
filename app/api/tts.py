@@ -12,26 +12,25 @@ tts_service = AfricaTTSService()
 llm_service = LLMTranslationService()
 english_tts_service = EnglishTTSService()
 
-@router.post("/translate")
+@router.post("/translate", response_model=TranslationResponse)
 async def translate_text(payload: TranslationRequest):
     """
     Translate English text to Asante Twi.
-    Returns the translation instantly — no audio synthesis.
     """
     try:
         twi_text = await llm_service.translate(payload.english_text)
-        return {"twi_text": twi_text}
+        return TranslationResponse(translated_text=twi_text)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/translate-to-english")
-async def translate_twi_to_english(payload: TwiToEnglishRequest):
+@router.post("/translate-twi", response_model=TranslationResponse)
+async def translate_twi_short(payload: TwiToEnglishRequest):
     """
     Translate Asante Twi text to English.
     """
     try:
         english_text = await llm_service.translate_to_english(payload.twi_text)
-        return {"english_text": english_text}
+        return TranslationResponse(translated_text=english_text)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -39,12 +38,10 @@ async def translate_twi_to_english(payload: TwiToEnglishRequest):
 async def synthesize_speech(payload: TTSRequest):
     """
     Translate English to Asante Twi and synthesize the audio.
-    Returns the Twi text and a base64-encoded audio data URL.
     """
     try:
         twi_text = payload.twi_text
 
-        # Step 1: Translate if twi_text not provided
         if not twi_text and payload.english_text:
             twi_text = await llm_service.translate(payload.english_text)
 
@@ -54,7 +51,6 @@ async def synthesize_speech(payload: TTSRequest):
                 detail="Either 'english_text' or 'twi_text' must be provided."
             )
 
-        # Step 2: Synthesize (Asante Twi -> Speech)
         local_temp_path = await asyncio.to_thread(
             tts_service.synthesize,
             text=twi_text,
@@ -67,7 +63,6 @@ async def synthesize_speech(payload: TTSRequest):
         audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
         audio_url = f"data:audio/wav;base64,{audio_b64}"
 
-        # Clean up Africa TTS temp file
         if os.path.exists(local_temp_path):
             os.remove(local_temp_path)
 
@@ -85,12 +80,10 @@ async def synthesize_english_speech(payload: TwiToEnglishRequest):
     Translate Twi to English and synthesize English speech.
     """
     try:
-        # Step 1: Translate Twi to English
         english_text = await llm_service.translate_to_english(payload.twi_text)
         
         audio_url = None
         if payload.include_audio:
-            # Step 2: Synthesize English Speech
             audio_url = await english_tts_service.synthesize(english_text)
             
         return TwiToEnglishResponse(
