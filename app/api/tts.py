@@ -2,7 +2,7 @@ import base64
 import os
 import asyncio
 from fastapi import APIRouter, HTTPException
-from app.schemas.tts import TTSRequest, TTSResponse, TranslationRequest, TwiToEnglishRequest, TwiToEnglishResponse
+from app.schemas.tts import TTSRequest, TTSResponse, TranslationRequest, TwiToEnglishRequest, TwiToEnglishResponse, TranslationResponse
 from app.services.africa_tts import AfricaTTSService
 from app.services.llm import LLMTranslationService
 from app.services.english_tts import EnglishTTSService
